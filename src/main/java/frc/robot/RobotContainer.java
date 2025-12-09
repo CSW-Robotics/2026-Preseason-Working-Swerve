@@ -58,29 +58,39 @@ public class RobotContainer {
             )
         );
 
-        // Should theoretically switch us to robot reletive mode.
-        new JoystickButton(r_joystick,1).onTrue(new InstantCommand( ()->
-            drivetrain.setControl(
-            new SwerveRequest.RobotCentric() // Robot-centric mode
-                .withVelocityX(r_joystick.getX())   
-                .withVelocityY(r_joystick.getY())   
-                .withRotationalRate(-l_joystick.getX())
-        )))
-        .onFalse(new InstantCommand(() -> drivetrain.setControl(
-        new SwerveRequest.FieldCentric() // Switch back to robot-relative mode
-        )));
-
+        
         // Theoretically resets the field reletive possitioning
         new JoystickButton(r_joystick,3).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
-        // Theoretically applies the break
+        // Theoretically applies the break works great in the sim
         new JoystickButton(r_joystick,5).whileTrue(drivetrain.applyRequest(() -> brake));
 
 
         // This didnt work more testing is needed
         // Im not 100% sure what this is supposed to do.
         // Seems like it points the modules in the direction of the joystick?
-        //new JoystickButton(l_joystick,1).whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(-l_joystick.getX(),-l_joystick.getY()))));
+        new JoystickButton(l_joystick,1).whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(-l_joystick.getX(),-l_joystick.getY()))));
+
+
+        // Should theoretically switch us to robot reletive mode. I want to test in person
+        new JoystickButton(r_joystick,1).whileTrue(
+            drivetrain.applyRequest( () -> new SwerveRequest.RobotCentric() // Robot-centric mode
+                .withVelocityX(-r_joystick.getY()*4)   
+                .withVelocityY(-r_joystick.getX()*4)   
+                .withRotationalRate(-l_joystick.getX()*4)
+        ));
+
+
+
+        // We will want to use these system ids to tune the pid constants 
+
+             // // Run SysId routines when holding back/start and X/Y.
+            // // Note that each routine should be run exactly once in a single log.
+            // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+            // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+            // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+            // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
 
 
         // ALL OF THE STUFF THAT WAS GENERATED THAT I COMMENTED OUT

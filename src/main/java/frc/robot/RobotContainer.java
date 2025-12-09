@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -56,11 +58,28 @@ public class RobotContainer {
             )
         );
 
-        new JoystickButton(r_joystick,3).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        new JoystickButton(r_joystick,3).onTrue(drivetrain.runOnce(() -> System.out.println("Button ran")));
-        
+        // Should theoretically switch us to robot reletive mode.
+        new JoystickButton(r_joystick,1).onTrue(new InstantCommand( ()->
+            drivetrain.setControl(
+            new SwerveRequest.RobotCentric() // Robot-centric mode
+                .withVelocityX(r_joystick.getX())   
+                .withVelocityY(r_joystick.getY())   
+                .withRotationalRate(-l_joystick.getX())
+        )))
+        .onFalse(new InstantCommand(() -> drivetrain.setControl(
+        new SwerveRequest.FieldCentric() // Switch back to robot-relative mode
+        )));
 
-        // This didnt work
+        // Theoretically resets the field reletive possitioning
+        new JoystickButton(r_joystick,3).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        
+        // Theoretically applies the break
+        new JoystickButton(r_joystick,5).whileTrue(drivetrain.applyRequest(() -> brake));
+
+
+        // This didnt work more testing is needed
+        // Im not 100% sure what this is supposed to do.
+        // Seems like it points the modules in the direction of the joystick?
         //new JoystickButton(l_joystick,1).whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(-l_joystick.getX(),-l_joystick.getY()))));
 
 

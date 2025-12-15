@@ -19,9 +19,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.commands.LimeLightTracking;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.LimeLight;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -41,6 +42,10 @@ public class RobotContainer {
     private final Joystick r_joystick = new Joystick(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    public final LimeLight f_limelight = new LimeLight("limelight-front",0,0,0);
+
+    
 
     public RobotContainer() {
         configureBindings();
@@ -66,14 +71,14 @@ public class RobotContainer {
         new JoystickButton(r_joystick,5).whileTrue(drivetrain.applyRequest(() -> brake));
 
 
-        // This didnt work more testing is needed
-        // Im not 100% sure what this is supposed to do.
-        // Seems like it points the modules in the direction of the joystick?
-        new JoystickButton(l_joystick,1).whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(-l_joystick.getX(),-l_joystick.getY()))));
-
+        new JoystickButton(r_joystick,1).whileTrue(drivetrain.applyRequest(() -> LimeLightTracking.Track(drivetrain,f_limelight)));
+        
+        
+        
+        new JoystickButton(r_joystick,1).onTrue(new InstantCommand(()->System.out.println(f_limelight.tv)));
 
         // Should theoretically switch us to robot reletive mode. I want to test in person
-        new JoystickButton(r_joystick,1).whileTrue(
+        new JoystickButton(l_joystick,1).whileTrue(
             drivetrain.applyRequest( () -> new SwerveRequest.RobotCentric() // Robot-centric mode
                 .withVelocityX(-r_joystick.getY()*4)   
                 .withVelocityY(-r_joystick.getX()*4)   

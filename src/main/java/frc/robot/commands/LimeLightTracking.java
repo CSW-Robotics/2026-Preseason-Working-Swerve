@@ -18,26 +18,26 @@ public class LimeLightTracking extends Command {
                 .withVelocityX(
                     Math.copySign(
                         Math.min(
-                            Math.abs((limelight.DDDx3_data3D[2]-limelight.zoffset))*10,
+                            Math.abs((limelight.targetData[2]-limelight.zoffset))*10,
                              1), // the speed that we limit the limelights at
-                        limelight.DDDx3_data3D[2]-limelight.zoffset
+                        limelight.targetData[2]-limelight.zoffset
                     )
                 )   
 
                 .withVelocityY(
                     Math.copySign(
                         Math.min(
-                            Math.abs((limelight.DDDx3_data3D[0]-limelight.xoffset)),
+                            Math.abs((limelight.targetData[0]-limelight.xoffset)),
                             0.8), // the speed that we limit the limelights at
-                        -limelight.DDDx3_data3D[0]-limelight.xoffset
+                        -limelight.targetData[0]-limelight.xoffset
                     )
                 )   
                 .withRotationalRate(
                     Math.copySign(
                         Math.min(
-                            Math.abs((limelight.DDDx3_data3D[4]-limelight.rotoffset)),
+                            Math.abs((limelight.targetData[4]-limelight.rotoffset)),
                             0.3), // the speed that we limit the limelights at
-                        -limelight.DDDx3_data3D[4]-limelight.rotoffset
+                        -limelight.targetData[4]-limelight.rotoffset
                     )
                 );
 
